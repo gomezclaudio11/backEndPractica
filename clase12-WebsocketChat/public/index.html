@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>CHAT APP</h1>
+    <ul id="chat-list"></ul>
+    <form id="chat-form">
+        <input type="text" id="name" placeholder="Nombre" required>
+    <input type="text" id="message" placeholder="Mensaje" required>
+    <button type="submit">Send</button>
+    </form>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        const socket = io();
+        socket.on("chatHistory", (history) => {
+            const chatList = document.getElementById("chatList");
+            history.forEach((message) => {
+                displayMessage(message)
+            })
+        })
+        //recibe los mensajes
+        socket.on("chatMessage", (message) => {
+            displayMessage(message)
+        });
+
+        document.getElementById("chat-form").addEventListener("submit" , (event) => {
+         event.preventDefault();
+         const nameInput = document.getElementById("name");
+         const messageInput = document.getElementById("message");
+
+         const name = nameInput.value;
+         const message = messageInput.value;
+
+         if (name && message) {
+            socket.emit("chatMessage", {name, message})
+            messageInput.value = "";
+         }
+        })
+
+        function displayMessage({ name, message}) {
+            const chatList = document.getElementById('chat-list');
+            const listItem = document.createElement('li');
+            listItem.textContent = `${name}: ${message}`;
+            chatList.appendChild(listItem);
+        }
+    </script>
+</body>
+</html>
