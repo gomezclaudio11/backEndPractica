@@ -1,0 +1,1 @@
+console.log("hola"),setTimeout((()=>{console.log("clau")}),2e3),setTimeout((()=>{console.log("crack")}),3e3);
